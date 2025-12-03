@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Lieferservice Bestellung</title>
+  <link rel="stylesheet" href="layout.css" />
+  <script src="https://www.paypal.com/sdk/js?client-id=AQ5WBKDf0hxEb5U_05ObXD5sMzfry1y-UrwpHzQqnDuBjclZqlJjAGZ-Ur0kIsSsve23Yd4IDjSGkJXg&intent=authorize"></script>
+  <style>.hidden { display:none; }</style>
+</head>
+<body>
+  <div class="container">
+    <h2>Lieferservice Bestellung</h2>
+    <form id="orderForm" method="POST" action="admin.php" onsubmit="return validateOrder(event)">
+      <input type="text" name="name" id="name" placeholder="Name" required>
+      <input type="text" name="address" id="address" placeholder="Adresse" required>
+      <input type="text" name="phone" id="phone" placeholder="Telefonnummer" required>
+      <input type="email" name="email" id="email" placeholder="E-Mail" required>
+
+      <label for="payment">Zahlungsmethode wählen:</label>
+      <select name="payment" id="payment" required>
+        <option value="">-- Bitte wählen --</option>
+        <option value="paypal">PayPal</option>
+        <option value="bar">Bar</option>
+      </select>
+
+      <input type="hidden" name="distance" id="distance">
+      <input type="hidden" name="paypal_authorization" id="paypalAuth">
+
+      <div id="paypal-container" class="hidden">
+        <h3>PayPal Zahlung autorisieren</h3>
+        <div id="paypal-button"></div>
+      </div>
+      <input type="hidden" name="cart_items" id="cartItems">
+      <button type="submit">Bestellen</button>
+    </form>
+    <p id="status"></p>
+  </div>
+
+<script>
+const restaurantLat = 51.731083;
+const restaurantLon = 8.736139;
+
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let totalPrice = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+document.getElementById("payment").addEventListener("change", e => {
+  document.getElementById("paypal-container").classList.toggle("hidden", e.target.value !== "paypal");
+});
+
+let authorizationID = null;
+
+paypal.Buttons({
+    createOrder: (data, actions) => {
+        return actions.order.create({
+            intent: "AUTHORIZE",
+            purchase_units: [{
+                amount: { value: totalPrice.toFixed(2) }
+            }]
+        });
+    },
+    onApprove: (data, actions) => {
+        return actions.order.authorize().then(auth => {
+            authorizationID = auth.purchase_units[0].payments.authorizations[0].id;
+            document.getElementById("paypalAuth").value = authorizationID;
+            document.getElementById("status").innerText = "✔ PayPal-Zahlung autorisiert.";
+        });
+    }
+}).render("#paypal-button");
+
+async function validateOrder(event) {
+  event.preventDefault();
+  let status = document.getElementById("status");
+  let payment = document.getElementById("payment").value;
+  let address = document.getElementById("address").value;
+
+  if (payment === "paypal" && !authorizationID) {
+    status.innerText = "⚠ Bitte zuerst PayPal-Zahlung autorisieren!";
+    return false;
+  }
+
+  status.innerText = "Adresse wird geprüft...";
+  let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+  let response = await fetch(url);
+  let data = await response.json();
+
+  if (data.length === 0) {
+    status.innerText = "❌ Adresse konnte nicht gefunden werden.";
+    return false;
+  }
+
+  let dist = haversine(restaurantLat, restaurantLon, data[0].lat, data[0].lon);
+  if (dist > 5) {
+    status.innerText = "❌ Adresse zu weit entfernt (max 5 km).";
+    return false;
+  }
+  document.getElementById("cartItems").value = JSON.stringify(cart);
+  document.getElementById("distance").value = dist.toFixed(2);
+  status.innerText = `✔ Bestellung wird gesendet (${dist.toFixed(2)} km)...`;
+  document.getElementById("orderForm").submit();
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+</script>
+</body>
+</html>

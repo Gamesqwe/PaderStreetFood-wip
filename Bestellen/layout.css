@@ -1,0 +1,132 @@
+:root {
+  --color-white: #ffffff;
+  --color-darkgray: #000000;
+  --color-accent: #E63946;
+}
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  background: var(--color-darkgray);
+  margin: 0;
+  color: var(--color-white);
+}
+header, footer {
+  background: var(--color-darkgray);
+  color: var(--color-white);
+  text-align: center;
+  padding: 1rem;
+}
+nav button {
+  background: none;
+  border: none;
+  color: var(--color-white);
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+}
+nav button.active {
+  border-bottom: 2px solid var(--color-accent);
+}
+main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 2rem;
+}
+.item {
+  background: #111;
+  border: 1px solid #444;
+  border-radius: 8px;
+  margin: 1rem;
+  width: 250px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(255,255,255,0.1);
+  color: var(--color-white);
+}
+.item img {
+  width: 100%;
+  border-radius: 6px;
+}
+.item h3 {
+  margin: 0.5rem 0;
+}
+.item select, .item button {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+}
+.item button {
+  background: var(--color-accent);
+  color: var(--color-white);
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+}
+.cart {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: #111;
+  border: 1px solid #444;
+  padding: 1rem;
+  max-width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(255,255,255,0.2);
+  color: var(--color-white);
+}
+.cart h4 {
+  margin-top: 0;
+}
+.cart-item {
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+.cart-item button {
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+div.container {
+  width: 400px;               /* feste Breite */
+  margin: 100px auto;         /* zentriert auf der Seite */
+  text-align: center;
+  background-color: black;    /* für den Screenshot-Look */
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.hidden { display: none; }
+
+.thank-you { margin-top: 1rem; color: var(--color-accent); }
+
+input,
+select,
+button {
+  width: 100%;               /* gleich breit */
+  box-sizing: border-box;    /* Padding in Breite einbeziehen */
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+button {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #218838;
+}
+
+#status {
+  margin-top: 10px;
+  font-weight: bold;
+}

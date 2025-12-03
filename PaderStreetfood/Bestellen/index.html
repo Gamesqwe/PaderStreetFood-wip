@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Lieferservice Bestellung</title>
+    <link rel="stylesheet" href="layout.css" />
+
+</head>
+<body>
+  <div class="container">
+    <h2>Lieferservice Bestellung</h2>
+    <form id="orderForm" method="POST" action="admin.php" onsubmit="return validateOrder(event)">
+      <input type="text" name="name" id="name" placeholder="Name" required>
+      <input type="text" name="address" id="address" placeholder="Adresse" required>
+      <input type="text" name="phone" id="phone" placeholder="Telefonnummer" required>
+      <input type="email" name="email" id="email" placeholder="E-Mail" required>
+      
+      <label for="payment">Zahlungsmethode wählen:</label>
+      <select name="payment" id="payment" required>
+        <option value="">-- Bitte wählen --</option>
+        <option value="paypal">PayPal</option>
+        <option value="bar">Bar</option>
+      </select>
+      
+      <!-- verstecktes Feld für Distanz -->
+      <input type="hidden" name="distance" id="distance">
+
+      <button type="submit">Bestellen</button>
+    </form>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    // Fixe Koordinaten des Restaurants (Beispiel: Berlin Alexanderplatz)
+    const restaurantLat = 51.731083;
+    const restaurantLon = 8.736139;
+
+    async function validateOrder(event) {
+      event.preventDefault(); // Formular nicht sofort abschicken
+      let name = document.getElementById("name").value.trim();
+      let address = document.getElementById("address").value.trim();
+      let phone = document.getElementById("phone").value.trim();
+      let email = document.getElementById("email").value.trim();
+      let payment = document.getElementById("payment").value;
+      let status = document.getElementById("status");
+
+      if (!name || !address || !phone || !email || !payment) {
+        alert("Bitte alle Felder ausfüllen!");
+        return false;
+      }
+
+      status.innerText = "Adresse wird geprüft...";
+
+      // Adresse -> Koordinaten per Nominatim API (OpenStreetMap)
+      let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+      let response = await fetch(url);
+      let data = await response.json();
+
+      if (data.length === 0) {
+        status.innerText = "❌ Adresse konnte nicht gefunden werden.";
+        return false;
+      }
+
+      let customerLat = parseFloat(data[0].lat);
+      let customerLon = parseFloat(data[0].lon);
+
+      // Distanz berechnen
+      let distance = haversine(restaurantLat, restaurantLon, customerLat, customerLon);
+
+      if (distance > 5) {
+        status.innerText = `❌ Adresse liegt zu weit entfernt (${distance.toFixed(2)} km). Lieferung nur bis 5 km.`;
+        return false;
+      }
+
+      // Zahlungsmethode prüfen
+      if (payment === "paypal") {
+        let ok = confirm("PayPal-Verbindung erfolgreich. Bestellung abschicken?");
+        if (!ok) {
+          status.innerText = "❌ PayPal-Zahlung abgebrochen.";
+          return false;
+        }
+      }
+
+      // Distanz ins Formular schreiben
+      document.getElementById("distance").value = distance.toFixed(2);
+
+      // Alles ok -> Formular abschicken
+      status.innerText = `✅ Bestellung wird gesendet... Entfernung: ${distance.toFixed(2)} km.`;
+      document.getElementById("orderForm").submit();
+    }
+
+    // Haversine-Formel zur Distanzberechnung
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Erdradius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+  </script>
+</body>
+</html>

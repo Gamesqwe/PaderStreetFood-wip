@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Speisekarte</title>
+  <link rel="stylesheet" href="../common/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Speisekarte</h1>
+    <p>Willkommen in unserem Restaurant – hier finden Sie unsere vielfältigen Gerichte!</p>
+    <nav aria-label="Kategorien">
+      <button onclick="filterCategory('pizza')" class="active">Pizza</button>
+      <button onclick="filterCategory('snacks')">Snacks</button>
+      <button onclick="filterCategory('burger')">Burger</button>
+      <button onclick="filterCategory('drehspieß')">Drehspieß</button>
+      <button onclick="filterCategory('lahmacun')">Lahmacun</button>
+      <button onclick="filterCategory('dürüm')">Dürüm</button>
+      <button onclick="filterCategory('grill')">Grill</button>
+      <button onclick="filterCategory('veggie')">Veggie</button>
+      <button onclick="filterCategory('getreanke')">Getränke</button>
+    </nav>
+  </header>
+
+  <main id="menu"></main>
+
+ <div class="cart" aria-label="Warenkorb">
+  <h4>Warenkorb</h4>
+  <div id="cart-items"></div>
+</div>
+
+
+  <footer>
+    <p>Kontaktinformationen: [Adresse, Telefon, E-Mail]</p>
+    <p>&copy; 2025 Dein Restaurant</p>
+  </footer>
+<script src="script.js"></script>
+</body>
+</html>

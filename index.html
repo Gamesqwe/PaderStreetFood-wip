@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PaderStreetFood</title>
+  <link rel="stylesheet" href="common/style.css" />
+</head>
+<body>
+  <div id="overlay">
+    <div class="overlay-box">
+      <h2>Work in Progress</h2>
+      <button id="overlay-btn">OK</button>
+    </div>
+  </div>
+  
+  <header>
+    <h1>PaderStreetFood</h1>
+    <p>Willkommen bei PaderStreetfood – hier finden Sie unsere vielfältigen Gerichte!</p>
+    <nav aria-label="Kategorien">
+      <button onclick="filterCategory('pizza')" class="active">Pizza</button>
+      <button onclick="filterCategory('snacks')">Snacks</button>
+      <button onclick="filterCategory('burger')">Burger</button>
+      <button onclick="filterCategory('drehspieß')">Drehspieß</button>
+      <button onclick="filterCategory('lahmacun')">Lahmacun</button>
+      <button onclick="filterCategory('dürüm')">Dürüm</button>
+      <button onclick="filterCategory('grill')">Grill</button>
+      <button onclick="filterCategory('veggie')">Veggie</button>
+      <button onclick="filterCategory('salate')">Salate</button>
+      <button onclick="filterCategory('getreanke')">Getränke</button>
+    </nav>
+  </header>
+
+  <main id="menu"></main>
+
+  <div class="cart-icon-container" onclick="toggleCartModal()">
+    <span class="cart-count" id="cart-count">0</span>
+    <span class="icon-shopping-cart">🛒</span> 
+  </div>
+
+  <div id="cart-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="toggleCartModal()">&times;</span>
+      <h3>Ihr Warenkorb</h3>
+      <div id="cart-items-modal"></div>
+      <div class="modal-footer">
+        <div id="cart-total-modal" class="total">Gesamt: €0.00</div>
+        <button id="modal-order-btn" onclick="submitOrder()">Zur Kasse</button>
+      </div>
+    </div>
+  </div>
+
+
+  <footer>
+    <h2>Kontakt</h2>
+    <p>Barkhauser Str. 253 - 33106 Paderborn</p>
+    <a href="tel:+4952514032229"> Tel: 05251-403 22 29 </a>
+
+    <br><br>
+
+    <button class="impressum-btn" onclick="window.location.href='impressum.html';">
+        Impressum
+    </button>
+
+    <p>&copy; 2025 PaderStreetFood</p>
+  </footer>
+<script src="script.js"></script>
+</body>
+</html>
+
